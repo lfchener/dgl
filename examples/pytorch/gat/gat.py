@@ -15,7 +15,6 @@ from dgl.nn import GATConv
 
 class GAT(nn.Module):
     def __init__(self,
-                 g,
                  num_layers,
                  in_dim,
                  num_hidden,
@@ -27,7 +26,6 @@ class GAT(nn.Module):
                  negative_slope,
                  residual):
         super(GAT, self).__init__()
-        self.g = g
         self.num_layers = num_layers
         self.gat_layers = nn.ModuleList()
         self.activation = activation
@@ -46,10 +44,10 @@ class GAT(nn.Module):
             num_hidden * heads[-2], num_classes, heads[-1],
             feat_drop, attn_drop, negative_slope, residual, None))
 
-    def forward(self, inputs):
+    def forward(self, block, inputs):
         h = inputs
         for l in range(self.num_layers):
-            h = self.gat_layers[l](self.g, h).flatten(1)
+            h = self.gat_layers[l](block, h).flatten(1)
         # output projection
-        logits = self.gat_layers[-1](self.g, h).mean(1)
+        logits = self.gat_layers[-1](block, h).mean(1)
         return logits

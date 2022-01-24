@@ -80,8 +80,7 @@ def main(args):
     n_edges = g.number_of_edges()
     # create model
     heads = ([args.num_heads] * args.num_layers) + [args.num_out_heads]
-    model = GAT(g,
-                args.num_layers,
+    model = GAT(args.num_layers,
                 num_feats,
                 args.num_hidden,
                 n_classes,
@@ -109,7 +108,7 @@ def main(args):
         if epoch >= 3:
             t0 = time.time()
         # forward
-        logits = model(features)
+        logits = model(g, features)
         loss = loss_fcn(logits[train_mask], labels[train_mask])
 
         optimizer.zero_grad()
