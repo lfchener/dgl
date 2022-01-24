@@ -9,7 +9,6 @@ import time
 import argparse
 import tqdm
 
-from model import SAGE
 from gat import GAT
 from load_graph import load_reddit, inductive_split, load_ogb
 from utils import EarlyStopping
