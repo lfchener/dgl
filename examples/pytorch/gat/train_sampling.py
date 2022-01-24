@@ -10,8 +10,15 @@ import argparse
 import tqdm
 
 from gat import GAT
-from load_graph import load_reddit, inductive_split, load_ogb
 from utils import EarlyStopping
+
+def inductive_split(g):
+    """Split the graph into training graph, validation graph, and test graph by training
+    and validation masks.  Suitable for inductive models."""
+    train_g = g.subgraph(g.ndata['train_mask'])
+    val_g = g.subgraph(g.ndata['train_mask'] | g.ndata['val_mask'])
+    test_g = g
+    return train_g, val_g, test_g
 
 def compute_acc(pred, labels):
     """
@@ -187,9 +194,8 @@ if __name__ == '__main__':
         device = th.device('cpu')
 
     if args.dataset == 'reddit':
-        g, n_classes = load_reddit()
-    elif args.dataset == 'ogbn-products':
-        g, n_classes = load_ogb('ogbn-products')
+        g = dgl.data.RedditDataset()
+        n_classes = g.num_classes
     elif args.dataset == 'cora':
         g = dgl.data.CoraGraphDataset()
         n_classes = g.num_classes
