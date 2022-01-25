@@ -196,11 +196,11 @@ if __name__ == '__main__':
     if args.dataset == 'reddit':
         data = dgl.data.RedditDataset()
         g = data[0]
-        n_classes = g.num_classes
+        n_classes = data.num_classes
     elif args.dataset == 'cora':
         data = dgl.data.CoraGraphDataset()
         g = data[0]
-        n_classes = g.num_classes
+        n_classes = data.num_classes
     else:
         raise Exception('unknown dataset')
 
