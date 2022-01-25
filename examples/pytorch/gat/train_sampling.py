@@ -194,10 +194,12 @@ if __name__ == '__main__':
         device = th.device('cpu')
 
     if args.dataset == 'reddit':
-        g = dgl.data.RedditDataset()
+        data = dgl.data.RedditDataset()
+        g = data[0]
         n_classes = g.num_classes
     elif args.dataset == 'cora':
-        g = dgl.data.CoraGraphDataset()
+        data = dgl.data.CoraGraphDataset()
+        g = data[0]
         n_classes = g.num_classes
     else:
         raise Exception('unknown dataset')
