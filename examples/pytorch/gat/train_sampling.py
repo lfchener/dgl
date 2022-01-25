@@ -200,6 +200,9 @@ if __name__ == '__main__':
     elif args.dataset == 'cora':
         data = dgl.data.CoraGraphDataset()
         g = data[0]
+        # add self loop
+        g = dgl.remove_self_loop(g)
+        g = dgl.add_self_loop(g)
         n_classes = data.num_classes
     else:
         raise Exception('unknown dataset')
