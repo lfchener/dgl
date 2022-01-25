@@ -68,8 +68,8 @@ class GAT(nn.Module):
         # Therefore, we compute the representation of all nodes layer by layer.  The nodes
         # on each layer are of course splitted in batches.
         # TODO: can we standardize this?
-        for l, layer in enumerate(self.gat_layers + 1):
-            y = torch.zeros(g.num_nodes(), self.n_hidden if l != len(self.gat_layers) else self.n_classes)
+        for l, layer in enumerate(self.gat_layers):
+            y = torch.zeros(g.num_nodes(), self.n_hidden if l != len(self.gat_layers) -1 else self.n_classes)
 
             sampler = dgl.dataloading.MultiLayerFullNeighborSampler(1)
             dataloader = dgl.dataloading.NodeDataLoader(
@@ -87,7 +87,7 @@ class GAT(nn.Module):
 
                 block = block.int().to(device)
                 h = x[input_nodes].to(device)
-                if l != len(self.gat_layers):
+                if l != len(self.gat_layers) -1:
                     h = layer(block, h).flatten(1)
                     y[output_nodes] = h.cpu()
                 else:
