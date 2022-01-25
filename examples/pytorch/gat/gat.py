@@ -49,5 +49,5 @@ class GAT(nn.Module):
         for l in range(self.num_layers):
             h = self.gat_layers[l](blocks[l], h).flatten(1)
         # output projection
-        logits = self.gat_layers[-1](block[-1], h).mean(1)
+        logits = self.gat_layers[-1](blocks[-1], h).mean(1)
         return logits
