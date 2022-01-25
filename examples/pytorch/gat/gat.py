@@ -44,10 +44,10 @@ class GAT(nn.Module):
             num_hidden * heads[-2], num_classes, heads[-1],
             feat_drop, attn_drop, negative_slope, residual, None))
 
-    def forward(self, block, inputs):
+    def forward(self, blocks, inputs):
         h = inputs
         for l in range(self.num_layers):
-            h = self.gat_layers[l](block, h).flatten(1)
+            h = self.gat_layers[l](blocks[l], h).flatten(1)
         # output projection
-        logits = self.gat_layers[-1](block, h).mean(1)
+        logits = self.gat_layers[-1](block[-1], h).mean(1)
         return logits
