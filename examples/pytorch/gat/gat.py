@@ -31,6 +31,8 @@ class GAT(nn.Module):
         self.num_layers = num_layers
         self.gat_layers = nn.ModuleList()
         self.activation = activation
+        self.num_hidden = num_hidden
+        self.num_classes = num_classes
         # input projection (no residual)
         self.gat_layers.append(GATConv(
             in_dim, num_hidden, heads[0],
@@ -69,7 +71,7 @@ class GAT(nn.Module):
         # on each layer are of course splitted in batches.
         # TODO: can we standardize this?
         for l, layer in enumerate(self.gat_layers):
-            y = torch.zeros(g.num_nodes(), self.n_hidden if l != len(self.gat_layers) -1 else self.n_classes)
+            y = torch.zeros(g.num_nodes(), self.num_hidden if l != len(self.gat_layers) -1 else self.num_classes)
 
             sampler = dgl.dataloading.MultiLayerFullNeighborSampler(1)
             dataloader = dgl.dataloading.NodeDataLoader(
