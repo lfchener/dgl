@@ -97,7 +97,7 @@ def run(args, device, data):
     if args.early_stop:
         stopper = EarlyStopping(patience=100)
     loss_fcn = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
     # Training loop
     avg = 0
@@ -151,16 +151,16 @@ if __name__ == '__main__':
     argparser.add_argument('--dataset', type=str, default='reddit')
     argparser.add_argument('--num-epochs', type=int, default=20)
     argparser.add_argument('--num-hidden', type=int, default=16)
-    argparser.add_argument("--num-heads", type=int, default=8,
+    argparser.add_argument("--num-heads", type=int, default=4,
                         help="number of hidden attention heads")
     argparser.add_argument("--num-out-heads", type=int, default=1,
                         help="number of output attention heads")
-    argparser.add_argument('--num-layers', type=int, default=2)
+    argparser.add_argument('--num-layers', type=int, default=1)
     argparser.add_argument("--residual", action="store_true", default=False,
                         help="use residual connection")
-    argparser.add_argument("--in-drop", type=float, default=.6,
+    argparser.add_argument("--in-drop", type=float, default=.5,
                         help="input feature dropout")
-    argparser.add_argument("--attn-drop", type=float, default=.6,
+    argparser.add_argument("--attn-drop", type=float, default=.5,
                         help="attention dropout")
     argparser.add_argument('--fan-out', type=str, default='10,25')
     argparser.add_argument('--batch-size', type=int, default=1000)

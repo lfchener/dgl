@@ -72,7 +72,7 @@ class GAT(nn.Module):
         # on each layer are of course splitted in batches.
         # TODO: can we standardize this?
         for l, layer in enumerate(self.gat_layers):
-            y = torch.zeros(g.num_nodes(), self.num_hidden * self.heads[l-1] if l != len(self.gat_layers) -1 else self.num_classes)
+            y = torch.zeros(g.num_nodes(), self.num_hidden * self.heads[l] if l != len(self.gat_layers)-1 else self.num_classes)
 
             sampler = dgl.dataloading.MultiLayerFullNeighborSampler(1)
             dataloader = dgl.dataloading.NodeDataLoader(
