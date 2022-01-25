@@ -38,7 +38,7 @@ def evaluate(model, g, nfeat, labels, val_nid, device):
     """
     model.eval()
     with th.no_grad():
-        pred = model(g, nfeat)
+        pred = model.inference(g, nfeat, device, args.batch_size, args.num_workers)
     model.train()
     return compute_acc(pred[val_nid], labels[val_nid].to(pred.device))
 

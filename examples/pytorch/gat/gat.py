@@ -11,6 +11,8 @@ import torch
 import torch.nn as nn
 import dgl.function as fn
 from dgl.nn import GATConv
+import dgl
+import tqdm
 
 
 class GAT(nn.Module):
@@ -51,3 +53,46 @@ class GAT(nn.Module):
         # output projection
         logits = self.gat_layers[-1](blocks[-1], h).mean(1)
         return logits
+    
+    def inference(self, g, x, device, batch_size, num_workers):
+        """
+        Inference with the GraphSAGE model on full neighbors (i.e. without neighbor sampling).
+        g : the entire graph.
+        x : the input of entire node set.
+
+        The inference code is written in a fashion that it could handle any number of nodes and
+        layers.
+        """
+        # During inference with sampling, multi-layer blocks are very inefficient because
+        # lots of computations in the first few layers are repeated.
+        # Therefore, we compute the representation of all nodes layer by layer.  The nodes
+        # on each layer are of course splitted in batches.
+        # TODO: can we standardize this?
+        for l, layer in enumerate(self.gat_layers + 1):
+            y = torch.zeros(g.num_nodes(), self.n_hidden if l != len(self.gat_layers) else self.n_classes)
+
+            sampler = dgl.dataloading.MultiLayerFullNeighborSampler(1)
+            dataloader = dgl.dataloading.NodeDataLoader(
+                g,
+                torch.arange(g.num_nodes()).to(g.device),
+                sampler,
+                device=device if num_workers == 0 else None,
+                batch_size=batch_size,
+                shuffle=False,
+                drop_last=False,
+                num_workers=num_workers)
+
+            for input_nodes, output_nodes, blocks in tqdm.tqdm(dataloader):
+                block = blocks[0]
+
+                block = block.int().to(device)
+                h = x[input_nodes].to(device)
+                if l != len(self.gat_layers):
+                    h = layer(block, h).flatten(1)
+                    y[output_nodes] = h.cpu()
+                else:
+                    h = layer(block, h).mean(1)
+                    y[output_nodes] = h.cpu()
+
+            x = y
+        return y
