@@ -1,4 +1,6 @@
+import torch
 from torch import nn
+import dgl.function as fn
 import sys
 import dgl
 import torch.nn.functional as F
@@ -23,12 +25,6 @@ class MLPReadout(nn.Module):
             y = F.relu(y)
         y = self.FC_layers[self.L](y)
         return y
-
-import torch
-from torch import nn
-import dgl.function as fn
-
-import torch.nn.functional as F
 
 class GatedGCNLayer(nn.Module):
     """
