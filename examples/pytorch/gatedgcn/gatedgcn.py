@@ -1,5 +1,6 @@
 from torch import nn
 import dgl
+from ....python.dgl.nn.pytorch.conv.gatedgcn import GatedGCNLayer
 from dgl.nn import GatedGCNLayer
 import torch.nn.functional as F
 
