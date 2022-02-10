@@ -75,9 +75,9 @@ def run(args, device, data):
 
     # Define model and optimizer
     model = GatedGCN(in_feats,
-                      args.n_hidden,
+                      args.num_hidden,
                       n_classes,
-                      args.n_layers,
+                      args.num_layers,
                       dropout = 0.0,
                       batch_norm=True,
                       residual = True,
