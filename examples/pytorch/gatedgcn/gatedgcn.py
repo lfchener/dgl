@@ -131,5 +131,5 @@ class GatedGCN(nn.Module):
                 g.edata['e'] = e
             h, e = GGCN_layer(g)
         # MLP classifier
-        y = self.MLP_layer(h)
-        return y
+        #y = self.MLP_layer(h)
+        return h
