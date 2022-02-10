@@ -107,7 +107,7 @@ class GatedGCN(nn.Module):
 
         self.GatedGCN_layers = nn.ModuleList()
         if L > 1:
-            self.layers.append(GatedGCNLayer(input_dim, hidden_dim, dropout, batch_norm, residual))
+            self.GatedGCN_layers.append(GatedGCNLayer(input_dim, hidden_dim, dropout, batch_norm, residual))
             for i in range(1, L - 1):
                 self.GatedGCN_layers.append(GatedGCNLayer(hidden_dim, hidden_dim, dropout, batch_norm, residual))
             self.GatedGCN_layers.append(GatedGCNLayer(hidden_dim, output_dim, dropout, batch_norm, residual))
