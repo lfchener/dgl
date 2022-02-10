@@ -119,17 +119,17 @@ class GatedGCN(nn.Module):
         # ])
         self.MLP_layer = MLPReadout(hidden_dim, output_dim)
         self.edge_fea = edge_fea
-    def forward(self, g, h, e = None):
+    def forward(self, blocks, h, e = None):
         # input embedding
         #h = self.embedding_h(h)
         if self.edge_fea and e:
             e = self.embedding_e(e)
         # graph convnet layers
-        for GGCN_layer in self.GatedGCN_layers:
-            g.ndata['h'] = h
+        for GGCN_layer, block in zip(self.GatedGCN_layers, blocks):
+            block.ndata['h'] = h
             if self.edge_fea:
-                g.edata['e'] = e
-            h, e = GGCN_layer(g)
+                block.edata['e'] = e
+            h, e = GGCN_layer(block)
         # MLP classifier
         #y = self.MLP_layer(h)
         return h
