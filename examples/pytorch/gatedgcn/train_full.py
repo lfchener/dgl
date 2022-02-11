@@ -19,6 +19,11 @@ def evaluate(model, graph, features, labels, nid):
         _, indices = torch.max(logits, dim=1)
         correct = torch.sum(indices == labels)
         return correct.item() * 1.0 / len(labels)
+    
+def acc(logits, labels):
+    _, indices = torch.max(logits, dim=1)
+    correct = torch.sum(indices == labels)
+    return correct.item() * 1.0 / len(labels)
 
 def main(args):
     # load and preprocess dataset
@@ -91,6 +96,7 @@ def main(args):
         # forward
         logits = model(g, features)
         loss = F.cross_entropy(logits[train_nid], labels[train_nid])
+        train_acc = acc(logits[train_nid], labels[train_nid])
 
         optimizer.zero_grad()
         loss.backward()
@@ -100,8 +106,8 @@ def main(args):
             dur.append(time.time() - t0)
 
         acc = evaluate(model, g, features, labels, val_nid)
-        print("Epoch {:05d} | Time(s) {:.4f} | Loss {:.4f} | Accuracy {:.4f} | "
-              "ETputs(KTEPS) {:.2f}".format(epoch, np.mean(dur), loss.item(),
+        print("Epoch {:05d} | Time(s) {:.4f} | Loss {:.4f} | train acc {:.4f} | Accuracy {:.4f} | "
+              "ETputs(KTEPS) {:.2f}".format(epoch, np.mean(dur), loss.item(), train_acc,
                                             acc, n_edges / np.mean(dur) / 1000))
 
     print()
