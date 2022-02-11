@@ -125,10 +125,10 @@ class GatedGCN(nn.Module):
             e = self.embedding_e(e)
         # graph convnet layers
         for GGCN_layer in self.GatedGCN_layers:
-            block.ndata['h'] = h
+            g.ndata['h'] = h
             if self.edge_fea:
-                block.edata['e'] = e
-            h, e = GGCN_layer(block)
+                g.edata['e'] = e
+            h, e = GGCN_layer(g)
         # MLP classifier
         #y = self.MLP_layer(h)
         return h
