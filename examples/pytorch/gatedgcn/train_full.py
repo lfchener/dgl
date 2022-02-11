@@ -20,7 +20,7 @@ def evaluate(model, graph, features, labels, nid):
         correct = torch.sum(indices == labels)
         return correct.item() * 1.0 / len(labels)
     
-def acc(logits, labels):
+def cumpute_acc(logits, labels):
     _, indices = torch.max(logits, dim=1)
     correct = torch.sum(indices == labels)
     return correct.item() * 1.0 / len(labels)
@@ -96,7 +96,7 @@ def main(args):
         # forward
         logits = model(g, features)
         loss = F.cross_entropy(logits[train_nid], labels[train_nid])
-        train_acc = acc(logits[train_nid], labels[train_nid])
+        train_acc = cumpute_acc(logits[train_nid], labels[train_nid])
 
         optimizer.zero_grad()
         loss.backward()
