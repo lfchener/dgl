@@ -74,9 +74,8 @@ class GatedGCNLayer(nn.Module):
         g.edata['sigma'] = torch.sigmoid(g.edata['e'])
         g.update_all(fn.u_mul_e('Bh', 'sigma', 'm'), fn.sum('m', 'sum_sigma_h'))
         g.update_all(fn.copy_e('sigma', 'm'), fn.sum('m', 'sum_sigma'))
-        g.ndata['h'] = g.ndata['Ah'] + g.ndata['sum_sigma_h'] / (g.ndata['sum_sigma'] + 1e-6)
+        h = g.ndata['Ah'] + g.ndata['sum_sigma_h'] / (g.ndata['sum_sigma'] + 1e-6)
         #g.update_all(self.message_func,self.reduce_func) 
-        h = g.ndata['h'] # result of graph convolution
         e = g.edata['e'] # result of graph convolution
         
         if self.batch_norm:
@@ -119,13 +118,13 @@ class GatedGCN(nn.Module):
         # ])
         self.MLP_layer = MLPReadout(hidden_dim, output_dim)
         self.edge_fea = edge_fea
-    def forward(self, blocks, h, e = None):
+    def forward(self, g, h, e = None):
         # input embedding
         #h = self.embedding_h(h)
         if self.edge_fea and e:
             e = self.embedding_e(e)
         # graph convnet layers
-        for GGCN_layer, block in zip(self.GatedGCN_layers, blocks):
+        for GGCN_layer in self.GatedGCN_layers:
             block.ndata['h'] = h
             if self.edge_fea:
                 block.edata['e'] = e
