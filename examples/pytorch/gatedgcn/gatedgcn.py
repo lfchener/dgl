@@ -30,7 +30,7 @@ class GatedGCNLayer(nn.Module):
     """
         Param: []
     """
-    def __init__(self, input_dim, output_dim, dropout, batch_norm, residual=False, edge_fea=False):
+    def __init__(self, input_dim, output_dim, dropout, batch_norm, residual=True, edge_fea=False):
         super().__init__()
         self.in_channels = input_dim
         self.out_channels = output_dim
@@ -38,9 +38,6 @@ class GatedGCNLayer(nn.Module):
         self.batch_norm = batch_norm
         self.residual = residual
         self.edge_fea = edge_fea
-        
-        if input_dim != output_dim:
-            self.residual = False
         
         self.A = nn.Linear(input_dim, output_dim, bias=True)
         self.B = nn.Linear(input_dim, output_dim, bias=True)
@@ -103,24 +100,15 @@ class GatedGCN(nn.Module):
         super().__init__()
         self.embedding_h = nn.Linear(input_dim, hidden_dim)
         self.embedding_e = nn.Linear(1, hidden_dim)
-
-        self.GatedGCN_layers = nn.ModuleList()
-        if L > 1:
-            self.GatedGCN_layers.append(GatedGCNLayer(input_dim, hidden_dim, dropout, batch_norm, residual))
-            for i in range(1, L - 1):
-                self.GatedGCN_layers.append(GatedGCNLayer(hidden_dim, hidden_dim, dropout, batch_norm, residual))
-            self.GatedGCN_layers.append(GatedGCNLayer(hidden_dim, output_dim, dropout, batch_norm, residual))
-        else:
-            self.GatedGCN_layers.append(GatedGCNLayer(input_dim, output_dim, dropout, batch_norm, residual))
             
-        # self.GatedGCN_layers = nn.ModuleList([
-        #     GatedGCNLayer(hidden_dim, hidden_dim, dropout, batch_norm, residual) for _ in range(L)
-        # ])
+        self.GatedGCN_layers = nn.ModuleList([
+            GatedGCNLayer(hidden_dim, hidden_dim, dropout, batch_norm, residual) for _ in range(L)
+        ])
         self.MLP_layer = MLPReadout(hidden_dim, output_dim)
         self.edge_fea = edge_fea
     def forward(self, g, h, e = None):
         # input embedding
-        #h = self.embedding_h(h)
+        h = self.embedding_h(h)
         if self.edge_fea and e:
             e = self.embedding_e(e)
         # graph convnet layers
@@ -130,5 +118,5 @@ class GatedGCN(nn.Module):
                 g.edata['e'] = e
             h, e = GGCN_layer(g)
         # MLP classifier
-        #y = self.MLP_layer(h)
-        return h
+        y = self.MLP_layer(h)
+        return y
