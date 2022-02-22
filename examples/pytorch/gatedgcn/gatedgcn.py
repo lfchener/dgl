@@ -43,11 +43,11 @@ class GatedGCNLayer(nn.Module):
         self.B = nn.Linear(input_dim, output_dim, bias=True)
         self.D = nn.Linear(input_dim, output_dim, bias=True)
         self.E = nn.Linear(input_dim, output_dim, bias=True)
-        self.bn_node_h = nn.BatchNorm1d(output_dim)
+        self.bn_node_h = nn.LayerNorm(output_dim)
 
         if self.edge_fea:
             self.C = nn.Linear(input_dim, output_dim, bias=True)
-            self.bn_node_e = nn.BatchNorm1d(output_dim)
+            self.bn_node_e = nn.LayerNorm(output_dim)
     
     def forward(self, g):
         h = g.ndata['h']
