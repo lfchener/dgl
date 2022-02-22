@@ -127,7 +127,7 @@ class GatedGCN(nn.Module):
         V = label.size(0)
         label_count = torch.bincount(label)
         label_count = label_count[label_count.nonzero(as_tuple = False)].squeeze()
-        cluster_sizes = torch.zeros(self.n_classes).long().to(self.device)
+        cluster_sizes = torch.zeros(label_count.shape[0]).long()
         cluster_sizes[torch.unique(label)] = label_count
         weight = (V - cluster_sizes).float() / V
         weight *= (cluster_sizes>0).float()
