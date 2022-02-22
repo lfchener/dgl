@@ -75,7 +75,7 @@ def main(args):
                       args.n_hidden,
                       n_classes,
                       args.n_layers,
-                      dropout = 0.0,
+                      dropout = 0.5,
                       batch_norm=True,
                       residual = True,
                       edge_fea = False
@@ -122,11 +122,11 @@ if __name__ == '__main__':
                         help="dropout probability")
     parser.add_argument("--gpu", type=int, default=-1,
                         help="gpu")
-    parser.add_argument("--lr", type=float, default=1e-2,
+    parser.add_argument("--lr", type=float, default=0.02,
                         help="learning rate")
     parser.add_argument("--n-epochs", type=int, default=300,
                         help="number of training epochs")
-    parser.add_argument("--n-hidden", type=int, default=8,
+    parser.add_argument("--n-hidden", type=int, default=16,
                         help="number of hidden gatedgcn units")
     parser.add_argument("--n-layers", type=int, default=2,
                         help="number of hidden gatedgcn layers")
