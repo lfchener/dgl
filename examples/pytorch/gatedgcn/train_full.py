@@ -75,7 +75,7 @@ def main(args):
                       args.n_hidden,
                       n_classes,
                       args.n_layers,
-                      dropout = 0.5,
+                      dropout = args.dropout,
                       batch_norm=True,
                       residual = True,
                       edge_fea = False
@@ -95,7 +95,7 @@ def main(args):
             t0 = time.time()
         # forward
         logits = model(g, features)
-        loss = F.cross_entropy(logits[train_nid], labels[train_nid])
+        loss = model.loss(logits[train_nid], labels[train_nid])#F.cross_entropy(logits[train_nid], labels[train_nid])
         train_acc = cumpute_acc(logits[train_nid], labels[train_nid])
 
         optimizer.zero_grad()
@@ -118,7 +118,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='GatedGCN')
     register_data_args(parser)
-    parser.add_argument("--dropout", type=float, default=0.0,
+    parser.add_argument("--dropout", type=float, default=0.5,
                         help="dropout probability")
     parser.add_argument("--gpu", type=int, default=-1,
                         help="gpu")
